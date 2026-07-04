@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom"
 import style from "../style/product.module.css";
 
-export function ProductDetails() {
+export default function ProductDetails() {
   
   let product = useLocation().state
   //Show details of product and show same productGroup items below

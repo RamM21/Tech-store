@@ -1,7 +1,7 @@
 import data from "../assets/products.json"
 import style from "../style/home.module.css"
 import { Link } from "react-router-dom"
-export function Home() {
+export default function Home() {
 
   //Show different category and productGroup items
   let product = Array.prototype
@@ -25,7 +25,7 @@ const renderCategory = (title: string, category: string, products: typeof produc
       {products
         .filter(p => p.category === category)
         .map(p => (
-          <Link to="/products/{p.id}" className={style.link} state={p}>
+          <Link to="/products/{p.id}" key={p.id} className={style.link} state={p}>
           <div key={p.id} className={style.productCard}>
             
             <img src={p.image} alt={p.name} className={style.productImage} />

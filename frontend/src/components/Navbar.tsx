@@ -1,5 +1,6 @@
 import {  Link } from "react-router-dom";
-import { Searchbar } from "./Searchbar"
+import  Searchbar  from "./Searchbar"
+import  ShoppingCart  from "./ShoppingCart";
 import { useState } from "react";
 import data from "../assets/products.json"
 import style from "../style/navbar.module.css";
@@ -58,10 +59,10 @@ export function Navbar() {
                 onMouseLeave={hideGroups}
               >
                 {Object.keys(categoryMap).map(category => (
-                  <Link to="/products/{hoverCategory}" onClick={()=>setOpen(false)} className={style.link} state={products.filter(p=>p.category===hoverCategory)}>
+                  <Link to="/category/{hoverCategory}" key={category} onClick={()=>setOpen(false)} className={style.link} state={products.filter(p=>p.category===hoverCategory)}>
                     <div
                       className={style.categoryItem}
-                      key={category}
+                      
                       onMouseEnter={() => setHoverCategory(category)}
                     >
                       {category}
@@ -96,7 +97,7 @@ export function Navbar() {
                       <Link
                         onClick={()=>setOpen(false)}
                         key={group}
-                        to={`/products/${hoverCategory}/${group}`}
+                        to={`/productGroup/${hoverCategory}`}
                         state={products.filter(p=>p.productGroup===group)}
                         className={style.dropdownLink}
                       > 
@@ -113,7 +114,11 @@ export function Navbar() {
       </div>
 
       <div className={style.center}>
-        <Searchbar />
+        <Searchbar products={products} />
+      </div>
+
+      <div>
+        <ShoppingCart />
       </div>
     </nav>
   );

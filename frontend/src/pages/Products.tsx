@@ -1,12 +1,14 @@
 import { useLocation } from "react-router-dom"
 import { useState } from "react";
 import style from "../style/category.module.css"
+import {type Products} from "../types/Products"
+import { type Props } from "../types/Products";
 
-export function Products() {
+
+export default function Products({ products: propProducts, category }: Props) {
 
   //Show products from category and sort by groups, maker, price.
 
-  let products = useLocation().state
   /*
   img
   productName
@@ -16,16 +18,22 @@ export function Products() {
   category
   productGroup
   */
+ 
+
+
+  const location = useLocation();
+  const products = propProducts ?? (location.state as Products[]);
+  const pageCategory = category ?? products[0]?.category ?? "Products";
 
   // Filters
   const [search, setSearch] = useState("");
   const [group, setGroup] = useState("");
   const [maker, setMaker] = useState("");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(500); // slider max
 
   // Unique filter options
-  const groups = [...new Set(products.map((p: { productGroup: any; }) => p.productGroup))];
-  const makers = [...new Set(products.map((p: { maker: any; }) => p.maker))];
+  const groups = [...new Set(products.map(p => p.productGroup))];
+  const makers = [...new Set(products.map(p => p.maker))];
 
   // Apply filters
   const filtered = products.filter(p => {
@@ -33,62 +41,74 @@ export function Products() {
       (search === "" || p.name.toLowerCase().includes(search.toLowerCase())) &&
       (group === "" || p.productGroup === group) &&
       (maker === "" || p.maker === maker) &&
-      (price === "" || p.price <= Number(price))
+      (price === 0 || p.price <= Number(price))
     );
   });
 
   return (
     <div className={style.container}>
-      <h1 className={style.title}>{products.category} Products</h1>
+      <h1 className={style.title}>{pageCategory}</h1>
 
-      {/* FILTER BAR */}
-      <div className={style.filters}>
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className={style.search}
-        />
+      <div className={style.layout}>
+        {/* SIDEBAR FILTERS */}
+        <aside className={style.sidebar}>
+          <h2>Filters</h2>
 
-        <select value={group} onChange={e => setGroup(e.target.value)} className={style.select}>
-          <option value="">All Groups</option>
-          {groups.map(g => (
-            <option key={g} value={g}>{g}</option>
-          ))}
-        </select>
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className={style.search}
+          />
 
-        <select value={maker} onChange={e => setMaker(e.target.value)} className={style.select}>
-          <option value="">All Makers</option>
-          {makers.map(m => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
+          <label>Group</label>
+          <select value={group} onChange={e => setGroup(e.target.value)} className={style.select}>
+            <option value="">All Groups</option>
+            {groups.map(g => (
+              <option key={String(g)} value={String(g)}>{String(g)}</option>
+            ))}
+          </select>
 
-        <select value={price} onChange={e => setPrice(e.target.value)} className={style.select}>
-          <option value="">Max Price</option>
-          <option value="50">Under 50€</option>
-          <option value="100">Under 100€</option>
-          <option value="200">Under 200€</option>
-          <option value="500">Under 500€</option>
-        </select>
-      </div>
+          <label>Maker</label>
+          <select value={maker} onChange={e => setMaker(e.target.value)} className={style.select}>
+            <option value="">All Makers</option>
+            {makers.map(m => (
+              <option key={String(m)} value={String(m)}>{String(m)}</option>
+            ))}
+          </select>
 
-      {/* PRODUCT LIST */}
-      <div className={style.list}>
-        {filtered.map(p => (
-          <div key={p.id} className={style.card}>
-            <img src={p.image} alt={p.name} className={style.image} />
+          <label htmlFor="priceRange">Max Price: {price}€</label>
+          <input
+            id="priceRange"
+            type="range"
+            min="0"
+            max="500"
+            step="10"
+            value={price}
+            onChange={e => setPrice(Number(e.target.value))}
+            className={style.slider}
+          />
+        </aside>
 
-            <div className={style.info}>
-              <h3 className={style.name}>{p.name}</h3>
-              <p className={style.price}>{p.price} €</p>
-              <p className={style.maker}>Maker: {p.maker}</p>
-              <p className={style.rating}>⭐ {p.rating}</p>
-              <p className={style.group}>Group: {p.productGroup}</p>
-            </div>
+        {/* PRODUCT LIST */}
+        <main className={style.products}>
+          <div className={style.list}>
+            {filtered.map(p => (
+              <div key={p.id} className={style.card}>
+                <img src={p.image} alt={p.name} className={style.image} />
+
+                <div className={style.info}>
+                  <h3 className={style.name}>{p.name}</h3>
+                  <p className={style.price}>{p.price} €</p>
+                  <p className={style.maker}>Maker: {p.maker}</p>
+                  <p className={style.rating}>⭐ {p.rating}/5</p>
+                  <p className={style.group}>Group: {p.productGroup}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </main>
       </div>
     </div>
   );

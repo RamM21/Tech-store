@@ -63,7 +63,7 @@ export default function Searchbar ({products}: {products: Product[]}) {
                         onClick={()=>setQuery("")}
                         key={cat}
                         to={`/category/${cat}`}
-                        state={products.filter(p => p.category === cat)}
+                        state={{products:products.filter(p => p.category === cat)}}
                         className={style.item}
                     >
                         {cat}
@@ -77,12 +77,15 @@ export default function Searchbar ({products}: {products: Product[]}) {
                     <div className={style.sectionTitle}>Product Groups</div>
                     {groupMatches.map(group => (
                     <Link
-                        onClick={()=>setQuery("")}
                         key={group}
-                        to={`/category/${group}`}
-                        state={products.filter(p => p.productGroup === group)}
+                        to={`/category/${productMatches[0]?.category ?? group}`}
+                        state={{
+                            products: products.filter(p => p.productGroup === group),
+                            preselectedGroup: group
+                        }}
+                        onClick={() => setQuery("")}
                         className={style.item}
-                    >
+                        >
                         {group}
                     </Link>
                     ))}

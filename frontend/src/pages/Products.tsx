@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom"
-import { useState } from "react";
+import { useState, type JSXElementConstructor, type Key, type ReactElement, type ReactNode, type ReactPortal } from "react";
 import style from "../style/category.module.css"
 import {type Products} from "../types/Products"
 import { type Props } from "../types/Products";
@@ -22,21 +22,23 @@ export default function Products({ products: propProducts, category }: Props) {
 
 
   const location = useLocation();
-  const products = propProducts ?? (location.state as Products[]);
-  const pageCategory = category ?? products[0]?.category ?? "Products";
-
+  const products = propProducts ?? location.state?.products ?? [];
+  const preselectedGroup = location.state?.preselectedGroup ?? "";
+  category = category ?? products[0].category
+  console.log(location.state)
   // Filters
   const [search, setSearch] = useState("");
-  const [group, setGroup] = useState("");
+  const [group, setGroup] = useState(preselectedGroup);
+  console.log(group)
   const [maker, setMaker] = useState("");
   const [price, setPrice] = useState(500); // slider max
 
   // Unique filter options
-  const groups = [...new Set(products.map(p => p.productGroup))];
-  const makers = [...new Set(products.map(p => p.maker))];
+  const groups = [...new Set(products.map((p: { productGroup: any; }) => p.productGroup))];
+  const makers = [...new Set(products.map((p: { maker: any; }) => p.maker))];
 
   // Apply filters
-  const filtered = products.filter(p => {
+  const filtered = products.filter((p: { name: string; productGroup: any; maker: string; price: number; }) => {
     return (
       (search === "" || p.name.toLowerCase().includes(search.toLowerCase())) &&
       (group === "" || p.productGroup === group) &&
@@ -44,10 +46,12 @@ export default function Products({ products: propProducts, category }: Props) {
       (price === 0 || p.price <= Number(price))
     );
   });
+  console.log("filter")
+  console.log(filtered)
 
   return (
     <div className={style.container}>
-      <h1 className={style.title}>{pageCategory}</h1>
+      <h1 className={style.title}>{category}</h1>
 
       <div className={style.layout}>
         {/* SIDEBAR FILTERS */}
@@ -94,7 +98,7 @@ export default function Products({ products: propProducts, category }: Props) {
         {/* PRODUCT LIST */}
         <main className={style.products}>
           <div className={style.list}>
-            {filtered.map(p => (
+            {filtered.map((p: { id: Key | null | undefined; image: string | undefined; name: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | undefined> | null | undefined; price: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; maker: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; rating: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; productGroup: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }) => (
               <div key={p.id} className={style.card}>
                 <img src={p.image} alt={p.name} className={style.image} />
 

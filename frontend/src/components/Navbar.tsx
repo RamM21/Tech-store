@@ -59,10 +59,18 @@ export function Navbar() {
                 onMouseLeave={hideGroups}
               >
                 {Object.keys(categoryMap).map(category => (
-                  <Link to="/category/{hoverCategory}" key={category} onClick={()=>setOpen(false)} className={style.link} state={products.filter(p=>p.category===hoverCategory)}>
+                  <Link
+                    key={category}
+                    to={`/category/${category}`}
+                    state={{
+                      products: products.filter(p => p.category === category),
+                      preselectedGroup: null
+                    }}
+                    onClick={() => setOpen(false)}
+                    className={style.link}
+                  >
                     <div
                       className={style.categoryItem}
-                      
                       onMouseEnter={() => setHoverCategory(category)}
                     >
                       {category}
@@ -95,12 +103,15 @@ export function Navbar() {
                   <div className={style.groupList}>
                     {[...categoryMap[hoverCategory]].map(group => (
                       <Link
-                        onClick={()=>setOpen(false)}
                         key={group}
-                        to={`/productGroup/${hoverCategory}`}
-                        state={products.filter(p=>p.productGroup===group)}
+                        to={`/category/${hoverCategory}`}
+                        state={{
+                          products: products.filter(p => p.productGroup === group),
+                          preselectedGroup: group
+                        }}
+                        onClick={() => setOpen(false)}
                         className={style.dropdownLink}
-                      > 
+                      >
                         {group}
                       </Link>
                     ))}

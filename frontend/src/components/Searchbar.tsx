@@ -63,7 +63,9 @@ export default function Searchbar ({products}: {products: Product[]}) {
                         onClick={()=>setQuery("")}
                         key={cat}
                         to={`/category/${cat}`}
-                        state={{products:products.filter(p => p.category === cat)}}
+                        state={{products:products.filter(p => p.category === cat),
+                                preselectedGroup : ""
+                        }}
                         className={style.item}
                     >
                         {cat}

@@ -107,7 +107,7 @@ export function Navbar() {
                         to={`/category/${hoverCategory}`}
                         state={{
                           products: products.filter(p => p.productGroup === group),
-                          preselectedGroup: group
+                          preselectedGroup: {hoverCategory}
                         }}
                         onClick={() => setOpen(false)}
                         className={style.dropdownLink}
